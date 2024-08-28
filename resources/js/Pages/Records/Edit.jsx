@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function Edit({ auth, record }) {
     const { data, setData, put, processing, errors } = useForm({
-        name: record.name,
-        description: record.description,
+        title: record.title,
+        description: record.description || '',
     });
 
     const handleSubmit = (e) => {
@@ -15,7 +15,7 @@ export default function Edit({ auth, record }) {
 
     return (
         <AuthenticatedLayout
-            user={auth}
+            user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Edit Record</h2>}
         >
             <Head title="Edit Record" />
@@ -25,21 +25,24 @@ export default function Edit({ auth, record }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <form onSubmit={handleSubmit}>
-                                <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                        Record Name
+                                {/* Title Field */}
+                                <div className="mb-4">
+                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                                        Title
                                     </label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        id="title"
+                                        value={data.title}
+                                        onChange={(e) => setData('title', e.target.value)}
                                         required
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50 focus:ring-indigo-300"
                                     />
-                                    {errors.name && <span className="text-red-600">{errors.name}</span>}
+                                    {errors.title && <div className="text-red-600 mt-2 text-sm">{errors.title}</div>}
                                 </div>
-                                <div className="mt-4">
+
+                                {/* Description Field */}
+                                <div className="mb-4">
                                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                                         Description
                                     </label>
@@ -47,17 +50,21 @@ export default function Edit({ auth, record }) {
                                         id="description"
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        className="mt-1 block w-full"
-                                    />
-                                    {errors.description && <span className="text-red-600">{errors.description}</span>}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50 focus:ring-indigo-300"
+                                    ></textarea>
+                                    {errors.description && <div className="text-red-600 mt-2 text-sm">{errors.description}</div>}
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    disabled={processing}
-                                >
-                                    Update Record
-                                </button>
+
+                                {/* Submit Button */}
+                                <div className="flex items-center justify-end mt-4">
+                                    <button
+                                        type="submit"
+                                        className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        disabled={processing}
+                                    >
+                                        Update
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>

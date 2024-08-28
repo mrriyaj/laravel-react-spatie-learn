@@ -12,7 +12,6 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Determine which records the user can view
         if ($user->hasPermissionTo('view_all_records')) {
             $records = Record::all();
         } elseif ($user->hasPermissionTo('view_own_records')) {
@@ -21,7 +20,6 @@ class RecordController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Return the records with the user's permissions to the front-end
         return inertia('Records/Index', [
             'auth' => [
                 'user' => $user,
@@ -35,7 +33,6 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Check if the user has permission to create records
         if (!$user->hasPermissionTo('create_records')) {
             abort(403, 'Unauthorized action.');
         }
@@ -52,13 +49,12 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Check if the user has permission to create records
         if (!$user->hasPermissionTo('create_records')) {
             abort(403, 'Unauthorized action.');
         }
 
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -73,8 +69,12 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Check if the user has permission to edit this record
-        if (!$user->hasPermissionTo('edit_all_records') && $record->user_id !== $user->id) {
+        // Check if the user has permission to edit all records,
+        // or if they have permission to edit their own records and own this record
+        if (
+            !$user->hasPermissionTo('edit_all_records') &&
+            !($user->hasPermissionTo('edit_own_records') && $record->user_id === $user->id)
+        ) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -91,13 +91,12 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Check if the user has permission to update this record
-        if (!$user->hasPermissionTo('edit_all_records') && $record->user_id !== $user->id) {
+        if (!$user->hasPermissionTo('edit_all_records') && (!$user->hasPermissionTo('edit_own_records') || $record->user_id !== $user->id)) {
             abort(403, 'Unauthorized action.');
         }
 
         $data = $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -110,8 +109,7 @@ class RecordController extends Controller
     {
         $user = Auth::user();
 
-        // Check if the user has permission to delete this record
-        if (!$user->hasPermissionTo('delete_all_records') && $record->user_id !== $user->id) {
+        if (!$user->hasPermissionTo('delete_all_records') && (!$user->hasPermissionTo('delete_own_records') || $record->user_id !== $user->id)) {
             abort(403, 'Unauthorized action.');
         }
 

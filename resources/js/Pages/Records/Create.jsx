@@ -4,7 +4,7 @@ import { Head, useForm } from '@inertiajs/react';
 
 export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
+        title: '',
         description: '',
     });
 
@@ -15,8 +15,8 @@ export default function Create({ auth }) {
 
     return (
         <AuthenticatedLayout
-            user={auth}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create Record</h2>}
+            user={auth.user}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Create New Record</h2>}
         >
             <Head title="Create Record" />
 
@@ -25,21 +25,24 @@ export default function Create({ auth }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <form onSubmit={handleSubmit}>
-                                <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                        Record Name
+                                {/* Title Field */}
+                                <div className="mb-4">
+                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                                        Title
                                     </label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        id="title"
+                                        value={data.title}
+                                        onChange={(e) => setData('title', e.target.value)}
                                         required
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50 focus:ring-indigo-300"
                                     />
-                                    {errors.name && <span className="text-red-600">{errors.name}</span>}
+                                    {errors.title && <div className="text-red-600 mt-2 text-sm">{errors.title}</div>}
                                 </div>
-                                <div className="mt-4">
+
+                                {/* Description Field */}
+                                <div className="mb-4">
                                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                                         Description
                                     </label>
@@ -47,17 +50,21 @@ export default function Create({ auth }) {
                                         id="description"
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        className="mt-1 block w-full"
-                                    />
-                                    {errors.description && <span className="text-red-600">{errors.description}</span>}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50 focus:ring-indigo-300"
+                                    ></textarea>
+                                    {errors.description && <div className="text-red-600 mt-2 text-sm">{errors.description}</div>}
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    disabled={processing}
-                                >
-                                    Create Record
-                                </button>
+
+                                {/* Submit Button */}
+                                <div className="flex items-center justify-end mt-4">
+                                    <button
+                                        type="submit"
+                                        className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        disabled={processing}
+                                    >
+                                        Create
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>

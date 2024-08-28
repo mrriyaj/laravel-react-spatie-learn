@@ -33,26 +33,20 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
 
     // List all records (view all or own)
-    Route::get('/records', [RecordController::class, 'index'])->name('records.index')
-    ->middleware('can:view_all_records,view_own_records');
+    Route::get('/records', [RecordController::class, 'index'])->name('records.index');
 
     // Create a new record
-    Route::get('/records/create', [RecordController::class, 'create'])->name('records.create')
-    ->middleware('can:create_records');
-    Route::post('/records', [RecordController::class, 'store'])->name('records.store')
-    ->middleware('can:create_records');
+    Route::get('/records/create', [RecordController::class, 'create'])->name('records.create');
+    Route::post('/records', [RecordController::class, 'store'])->name('records.store');
 
     // Edit a record
-    Route::get('/records/{record}/edit', [RecordController::class, 'edit'])->name('records.edit')
-    ->middleware('can:edit_all_records,edit_own_records,record');
+    Route::get('/records/{record}/edit', [RecordController::class, 'edit'])->name('records.edit');
 
     // Update a record
-    Route::put('/records/{record}', [RecordController::class, 'update'])->name('records.update')
-    ->middleware('can:edit_all_records,edit_own_records,record');
+    Route::put('/records/{record}', [RecordController::class, 'update'])->name('records.update');
 
     // Delete a record
-    Route::delete('/records/{record}', [RecordController::class, 'destroy'])->name('records.destroy')
-    ->middleware('can:delete_all_records,delete_own_records,record');
+    Route::delete('/records/{record}', [RecordController::class, 'destroy'])->name('records.destroy');
 });
 
 require __DIR__.'/auth.php';
