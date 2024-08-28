@@ -5,47 +5,64 @@ namespace App\Http\Controllers;
 use App\Models\Record;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
 
 class RecordController extends Controller
 {
     public function index()
     {
-        // Permission check for viewing all records
-        if (Auth::user()->can('view_all_records')) {
+        $user = Auth::user();
+
+        // Determine which records the user can view
+        if ($user->hasPermissionTo('view_all_records')) {
             $records = Record::all();
-        } elseif (Auth::user()->can('view_own_records')) {
-            // View only own records
-            $records = Record::where('user_id', Auth::id())->get();
+        } elseif ($user->hasPermissionTo('view_own_records')) {
+            $records = Record::where('user_id', $user->id)->get();
         } else {
             abort(403, 'Unauthorized action.');
         }
 
+        // Return the records with the user's permissions to the front-end
         return inertia('Records/Index', [
-            'auth' => Auth::user(),
+            'auth' => [
+                'user' => $user,
+                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            ],
             'records' => $records,
         ]);
     }
 
     public function create()
     {
-        $this->authorize('create_records');
+        $user = Auth::user();
+
+        // Check if the user has permission to create records
+        if (!$user->hasPermissionTo('create_records')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         return inertia('Records/Create', [
-            'auth' => Auth::user(),
+            'auth' => [
+                'user' => $user,
+                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            ],
         ]);
     }
 
     public function store(Request $request)
     {
-        $this->authorize('create_records');
+        $user = Auth::user();
+
+        // Check if the user has permission to create records
+        if (!$user->hasPermissionTo('create_records')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        $data['user_id'] = Auth::id();
+        $data['user_id'] = $user->id;
 
         Record::create($data);
 
@@ -54,21 +71,28 @@ class RecordController extends Controller
 
     public function edit(Record $record)
     {
-        $this->authorize('edit_all_records');
+        $user = Auth::user();
 
-        if (!Auth::user()->can('edit_all_records') && $record->user_id !== Auth::id()) {
+        // Check if the user has permission to edit this record
+        if (!$user->hasPermissionTo('edit_all_records') && $record->user_id !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
         return inertia('Records/Edit', [
-            'auth' => Auth::user(),
+            'auth' => [
+                'user' => $user,
+                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            ],
             'record' => $record,
         ]);
     }
 
     public function update(Request $request, Record $record)
     {
-        if (!Auth::user()->can('edit_all_records') && $record->user_id !== Auth::id()) {
+        $user = Auth::user();
+
+        // Check if the user has permission to update this record
+        if (!$user->hasPermissionTo('edit_all_records') && $record->user_id !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -84,7 +108,10 @@ class RecordController extends Controller
 
     public function destroy(Record $record)
     {
-        if (!Auth::user()->can('delete_all_records') && $record->user_id !== Auth::id()) {
+        $user = Auth::user();
+
+        // Check if the user has permission to delete this record
+        if (!$user->hasPermissionTo('delete_all_records') && $record->user_id !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
