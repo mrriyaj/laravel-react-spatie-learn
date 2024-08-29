@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug')->unique();
+            $table->string('slug')->nullable();
             $table->text('summary');
             $table->text('content');
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
