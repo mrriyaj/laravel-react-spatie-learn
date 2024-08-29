@@ -16,12 +16,14 @@ export default function Index({ auth, blogs }) {
                         Blogs
                     </h2>
                     <div>
-                        <Link
-                            href={route("blogs.create")}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                            Create New Blog
-                        </Link>
+                        {can(auth, "create_blogs") && (
+                            <Link
+                                href={route("blogs.create")}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Create New Blog
+                            </Link>
+                        )}
                     </div>
                 </div>
             }
