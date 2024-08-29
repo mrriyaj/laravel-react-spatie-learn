@@ -19,8 +19,39 @@ export default function Index({ auth, roles }) {
     const permissionTypes = ['create', 'view_all', 'view_own', 'edit_all', 'edit_own', 'delete_all', 'delete_own'];
 
     const renderPermissions = (role) => {
-        return Object.keys(categorizedPermissions).map(category => (
+        return Object.keys(categorizedPermissions).map((category, index) => (
             <tr key={category}>
+                {index === 0 && (
+                    <>
+                    <td
+                        rowSpan={Object.keys(categorizedPermissions).length}
+                        className="px-6 py-4 whitespace-nowrap text-center align-top"
+                    >
+                        <div className="text-sm font-medium text-gray-900 mb-2">
+                            {role.name}
+                        </div>
+                    </td>
+                    <td
+                        rowSpan={Object.keys(categorizedPermissions).length}
+                        className="px-6 py-4 whitespace-nowrap text-center align-top"
+                    >
+                        <div className="flex flex-col items-start space-y-2">
+                            <Link
+                                href={route('roles.edit', role.id)}
+                                className="text-indigo-600 hover:text-indigo-900 text-xs"
+                            >
+                                Edit
+                            </Link>
+                            <Link
+                                href="#"
+                                className="text-red-600 hover:text-red-900 text-xs"
+                            >
+                                Delete
+                            </Link>
+                        </div>
+                        </td>
+                    </>
+                )}
                 <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
                         {category}
@@ -74,7 +105,13 @@ export default function Index({ auth, roles }) {
                                                     </th>
                                                     <th
                                                         scope="col"
-                                                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        Actions
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                                     >
                                                         Category
                                                     </th>
@@ -87,43 +124,12 @@ export default function Index({ auth, roles }) {
                                                             {type.replace('_', ' ')}
                                                         </th>
                                                     ))}
-                                                    <th
-                                                        scope="col"
-                                                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                                    >
-                                                        Actions
-                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {roles.map((role) => (
                                                     <React.Fragment key={role.id}>
-                                                        <tr>
-                                                            <td className="px-6 py-4 whitespace-nowrap" rowSpan={Object.keys(categorizedPermissions).length + 1}>
-                                                                <div className="text-sm font-medium text-gray-900">
-                                                                    {role.name}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
                                                         {renderPermissions(role)}
-                                                        <tr>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-center" colSpan={permissionTypes.length + 1}>
-                                                                <div className="flex justify-end space-x-4">
-                                                                    <Link
-                                                                        href={route('roles.edit', role.id)}
-                                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                                    >
-                                                                        Edit
-                                                                    </Link>
-                                                                    <Link
-                                                                        href="#"
-                                                                        className="text-red-600 hover:text-red-900"
-                                                                    >
-                                                                        Delete
-                                                                    </Link>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
                                                     </React.Fragment>
                                                 ))}
                                             </tbody>
