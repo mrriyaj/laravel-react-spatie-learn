@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 export default function Edit({ auth, role, permissions, rolePermissions }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -19,6 +19,29 @@ export default function Edit({ auth, role, permissions, rolePermissions }) {
             : [...data.permissions, permission]
         );
     };
+
+    const toggleAllCategoryPermissions = (categoryPermissions, isSelected) => {
+        if (isSelected) {
+            setData('permissions', data.permissions.filter(p => !categoryPermissions.includes(p)));
+        } else {
+            setData('permissions', [...data.permissions, ...categoryPermissions.filter(p => !data.permissions.includes(p))]);
+        }
+    };
+
+    const categorizedPermissions = {
+        Records: [
+            'create_records', 'view_all_records', 'view_own_records',
+            'edit_all_records', 'edit_own_records',
+            'delete_all_records', 'delete_own_records'
+        ],
+        Blogs: [
+            'create_blogs', 'view_all_blogs', 'view_own_blogs',
+            'edit_all_blogs', 'edit_own_blogs',
+            'delete_all_blogs', 'delete_own_blogs'
+        ]
+    };
+
+    const permissionTypes = ['create', 'view_all', 'view_own', 'edit_all', 'edit_own', 'delete_all', 'delete_own'];
 
     return (
         <AuthenticatedLayout
@@ -46,32 +69,69 @@ export default function Edit({ auth, role, permissions, rolePermissions }) {
                                     />
                                     {errors.name && <span className="text-red-600">{errors.name}</span>}
                                 </div>
-                                <div className="mt-4">
-                                    <label className="block text-sm font-medium text-gray-700">Permissions</label>
-                                    <div className="mt-2 grid grid-cols-1 gap-4">
-                                        {permissions.map(permission => (
-                                            <div key={permission.id}>
-                                                <label className="inline-flex items-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        value={permission.name}
-                                                        checked={data.permissions.includes(permission.name)}
-                                                        onChange={() => togglePermission(permission.name)}
-                                                        className="form-checkbox"
-                                                    />
-                                                    <span className="ml-2">{permission.name}</span>
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
+
+                                <div className="mt-6">
+                                    <table className="min-w-full table-auto border-collapse">
+                                        <thead>
+                                            <tr>
+                                                <th className="px-4 py-2 border border-gray-300 text-left">Permission Category</th>
+                                                {permissionTypes.map(type => (
+                                                    <th key={type} className="px-4 py-2 border border-gray-300 text-center capitalize">
+                                                        {type.replace('_', ' ')}
+                                                    </th>
+                                                ))}
+                                                <th className="px-4 py-2 border border-gray-300 text-center">Select All</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Object.keys(categorizedPermissions).map(category => {
+                                                const categoryPermissions = categorizedPermissions[category];
+                                                const allSelected = categoryPermissions.every(permission => data.permissions.includes(permission));
+
+                                                return (
+                                                    <tr key={category}>
+                                                        <td className="px-4 py-2 border border-gray-300 font-medium">{category}</td>
+                                                        {permissionTypes.map(type => {
+                                                            const permissionKey = `${type}_${category.toLowerCase()}`;
+                                                            const permission = categoryPermissions.find(p => p.startsWith(type));
+
+                                                            return (
+                                                                <td key={type} className="px-4 py-2 border border-gray-300 text-center">
+                                                                    {permission && (
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={data.permissions.includes(permission)}
+                                                                            onChange={() => togglePermission(permission)}
+                                                                            className="form-checkbox h-4 w-4 text-blue-600"
+                                                                        />
+                                                                    )}
+                                                                </td>
+                                                            );
+                                                        })}
+                                                        <td className="px-4 py-2 border border-gray-300 text-center">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={allSelected}
+                                                                onChange={() => toggleAllCategoryPermissions(categoryPermissions, allSelected)}
+                                                                className="form-checkbox h-4 w-4 text-blue-600"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="mt-4 btn btn-primary"
-                                    disabled={processing}
-                                >
-                                    Update Role
-                                </button>
+
+                                <div className="mt-6">
+                                    <button
+                                        type="submit"
+                                        className="w-full btn btn-primary"
+                                        disabled={processing}
+                                    >
+                                        Update Role
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
