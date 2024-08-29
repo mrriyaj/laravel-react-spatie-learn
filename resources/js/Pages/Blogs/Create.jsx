@@ -18,9 +18,19 @@ export default function Create({ auth }) {
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Blog
-                </h2>
+                <div class="flex w-full items-center justify-between">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        Blog
+                    </h2>
+                    <div>
+                        <Link
+                            href={route("blogs.index")}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Go Back
+                        </Link>
+                    </div>
+                </div>
             }
         >
             <Head title="Blog" />
