@@ -2,152 +2,147 @@ import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { can } from "@/Lib/utils";
-import { Button } from "@headlessui/react";
 
 export default function Index({ auth, blogs }) {
     const user = auth.user;
+
+    const handleDelete = (blogId) => {
+        if (confirm("Are you sure you want to delete this blog?")) {
+            router.delete(route("blogs.destroy", blogId), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    alert("Blog deleted successfully.");
+                },
+                onError: () => {
+                    alert("Error deleting blog.");
+                },
+            });
+        }
+    };
 
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <div class="flex w-full items-center justify-between">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                        Blogs
-                    </h2>
-                    <div>
-                        {can(auth, "create_blogs") && (
-                            <Link
-                                href={route("blogs.create")}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                Create New Blog
-                            </Link>
-                        )}
-                    </div>
-                </div>
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Blogs
+                </h2>
             }
         >
             <Head title="Blogs" />
-            <div class="flex flex-wrap justify-center items-start mt-10">
-                {blogs.map((blog) => (
-                    <div className="p-4 max-w-md">
-                        <div className="flex rounded-lg h-full bg-white dark:bg-gray-800 p-8 flex-col shadow-lg transition-colors duration-300">
-                            <div className="flex items-center mb-3">
-                                <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0">
-                                    <svg
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        className="w-5 h-5"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                                    </svg>
-                                </div>
-                                <h2 className="text-gray-900 dark:text-gray-100 text-lg font-medium truncate transition-colors duration-300">
-                                    {blog.title}
-                                </h2>
-                            </div>
-                            <div className="flex flex-col justify-between flex-grow">
-                                <p className="leading-relaxed text-base text-gray-700 dark:text-gray-300 truncate transition-colors duration-300">
-                                    {blog.summary}
-                                </p>
-                                <div className="mt-4 flex items-center space-x-4">
+
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="p-6 bg-white border-b border-gray-200">
+                            <div className="mb-4 flex justify-between">
+                                {can(auth, "create_blogs") && (
                                     <Link
-                                        href={route("blogs.show", blog.id)}
-                                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 inline-flex items-center transition-colors duration-300"
+                                        href={route("blogs.create")}
+                                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
                                     >
-                                        Read More
-                                        <svg
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            className="w-4 h-4 ml-2"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M5 12h14M12 5l7 7-7 7"></path>
-                                        </svg>
+                                        Create New Blog
                                     </Link>
-                                    {can(auth, "edit_own_blogs") &&
-                                        user.id === blog.user_id && (
-                                            <Link
-                                                href={route(
-                                                    "blogs.edit",
-                                                    blog.id
-                                                )}
-                                                className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200 inline-flex items-center transition-colors duration-300"
-                                            >
-                                                Edit
-                                                <svg
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    className="w-4 h-4 ml-2"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M12 20h9M5.5 20h-1M7 20l-3-3V7l4-4h10l4 4v10l-3 3H7zm5-3v-8M5 8h14"></path>
-                                                </svg>
-                                            </Link>
-                                        )}
-                                    {can(auth, "delete_own_blogs") &&
-                                        user.id === blog.user_id && (
-                                            <Button
-                                                onClick={() => {
-                                                    if (
-                                                        confirm(
-                                                            "Are you sure you want to delete this blog?"
-                                                        )
-                                                    ) {
-                                                        router.delete(
-                                                            route(
-                                                                "blogs.destroy",
-                                                                blog.id
-                                                            ),
-                                                            {
-                                                                preserveScroll: true,
-                                                                onSuccess:
-                                                                    () => {
-                                                                        console.log(
-                                                                            "deleted"
-                                                                        );
-                                                                    },
-                                                                onError: () => {
-                                                                    console.log(
-                                                                        "error"
-                                                                    );
-                                                                },
-                                                            }
-                                                        );
-                                                    }
-                                                }}
-                                                className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200 inline-flex items-center transition-colors duration-300"
-                                            >
-                                                Delete
-                                                <svg
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    className="w-4 h-4 ml-2"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path d="M12 20h9M5.5 20h-1M7 20l-3-3V7l4-4h10l4 4v10l-3 3H7zm5-3v-8M5 8h14"></path>
-                                                </svg>
-                                            </Button>
-                                        )}
-                                </div>
+                                )}
+                                <span className="text-gray-500">
+                                    Total Blogs: {blogs.length}
+                                </span>
                             </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Title
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Summary
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Created By (User ID)
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {blogs.map((blog) => (
+                                            <tr key={blog.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {blog.title}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {blog.summary}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {blog.status}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {blog.user_id}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <Link
+                                                        href={route(
+                                                            "blogs.show",
+                                                            blog.id
+                                                        )}
+                                                        className="text-indigo-600 hover:text-indigo-900"
+                                                    >
+                                                        Read
+                                                    </Link>
+                                                    {can(
+                                                        auth,
+                                                        "edit_own_blogs"
+                                                    ) &&
+                                                        user.id ===
+                                                        blog.user_id && (
+                                                            <Link
+                                                                href={route(
+                                                                    "blogs.edit",
+                                                                    blog.id
+                                                                )}
+                                                                className="ml-4 text-yellow-600 hover:text-yellow-900"
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        )}
+                                                    {can(
+                                                        auth,
+                                                        "delete_own_blogs"
+                                                    ) &&
+                                                        user.id ===
+                                                        blog.user_id && (
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        blog.id
+                                                                    )
+                                                                }
+                                                                className="ml-4 text-red-600 hover:text-red-900"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {blogs.length === 0 && (
+                                <div className="text-center text-gray-500 mt-4">
+                                    No blogs found.
+                                </div>
+                            )}
                         </div>
                     </div>
-                ))}
+                </div>
             </div>
         </AuthenticatedLayout>
     );
