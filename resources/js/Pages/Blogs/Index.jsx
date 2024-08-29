@@ -23,44 +23,44 @@ export default function Index({ auth, blogs }) {
             }
         >
             <Head title="Blogs" />
-            <div class="flex flex-wrap justify-center mt-10">
+            <div class="flex flex-wrap justify-center items-start mt-10">
                 {blogs.map((blog) => (
-                    <div class="p-4 max-w-sm">
-                        <div class="flex rounded-lg h-full dark:bg-gray-800 bg-teal-400 p-8 flex-col">
-                            <div class="flex items-center mb-3">
-                                <div class="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full dark:bg-indigo-500 bg-indigo-500 text-white flex-shrink-0">
+                    <div className="p-4 max-w-sm">
+                        <div className="flex rounded-lg h-full bg-white dark:bg-gray-800 p-8 flex-col shadow-lg transition-colors duration-300">
+                            <div className="flex items-center mb-3">
+                                <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0">
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        class="w-5 h-5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        className="w-5 h-5"
                                         viewBox="0 0 24 24"
                                     >
                                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                                     </svg>
                                 </div>
-                                <h2 class="text-white dark:text-white text-lg font-medium truncate">
+                                <h2 className="text-gray-900 dark:text-gray-100 text-lg font-medium truncate transition-colors duration-300">
                                     {blog.title}
                                 </h2>
                             </div>
-                            <div class="flex flex-col justify-between flex-grow">
-                                <p class="leading-relaxed text-base text-white dark:text-gray-300 truncate">
+                            <div className="flex flex-col justify-between flex-grow">
+                                <p className="leading-relaxed text-base text-gray-700 dark:text-gray-300 truncate transition-colors duration-300">
                                     {blog.summary}
                                 </p>
                                 <Link
                                     href={route("blogs.show", blog.id)}
-                                    class="mt-3 text-black dark:text-white hover:text-blue-600 inline-flex items-center"
+                                    className="mt-3 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 inline-flex items-center transition-colors duration-300"
                                 >
                                     Read More
                                     <svg
                                         fill="none"
                                         stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        class="w-4 h-4 ml-2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        className="w-4 h-4 ml-2"
                                         viewBox="0 0 24 24"
                                     >
                                         <path d="M5 12h14M12 5l7 7-7 7"></path>
