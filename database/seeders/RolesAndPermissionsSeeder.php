@@ -49,7 +49,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $userRole->givePermissionTo(array_merge([
             'view_own_records',
             'edit_own_records',
-        ], $blogPermission));
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
 
         // Additional roles if needed
         $managerRole = Role::create(['name' => 'manager']);
@@ -58,13 +58,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_all_records',
             'edit_all_records',
             'delete_all_records'
-        ], $blogPermission));
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
 
         $editorRole = Role::create(['name' => 'editor']);
         $editorRole->givePermissionTo(array_merge([
             'view_all_records',
             'edit_own_records',
             'edit_all_records'
-        ], $blogPermission));
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
     }
 }
