@@ -65,6 +65,28 @@ class RecordController extends Controller
         return redirect()->route('records.index')->with('success', 'Record created successfully.');
     }
 
+    public function show(Record $record)
+    {
+        $user = Auth::user();
+
+        // Check if the user has permission to view all records,
+        // or if they have permission to view their own records and own this record
+        if (
+            !$user->hasPermissionTo('view_all_records') &&
+            !($user->hasPermissionTo('view_own_records') && $record->user_id === $user->id)
+        ) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return inertia('Records/Show', [
+            'auth' => [
+                'user' => $user,
+                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            ],
+            'record' => $record,
+        ]);
+    }
+
     public function edit(Record $record)
     {
         $user = Auth::user();

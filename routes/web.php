@@ -29,21 +29,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('roles', RoleController::class);
-});
-
-Route::middleware(['auth'])->group(function () {
 
     // List all records (view all or own)
-    Route::get('/records', [RecordController::class, 'index'])->name('records.index');
-    // Create a new record
-    Route::get('/records/create', [RecordController::class, 'create'])->name('records.create');
-    Route::post('/records', [RecordController::class, 'store'])->name('records.store');
-    // Edit a record
-    Route::get('/records/{record}/edit', [RecordController::class, 'edit'])->name('records.edit');
-    // Update a record
-    Route::put('/records/{record}', [RecordController::class, 'update'])->name('records.update');
-    // Delete a record
-    Route::delete('/records/{record}', [RecordController::class, 'destroy'])->name('records.destroy');
+    Route::resource('records', RecordController::class);
 
     // Blog routes
     Route::resource('blogs', BlogController::class);

@@ -14,7 +14,7 @@ export default function Index({ auth, records }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
-                            <div className="mb-4">
+                            <div className="mb-4 flex justify-between">
                                 {auth.permissions.includes('create_records') && (
                                     <Link
                                         href={route('records.create')}
@@ -23,6 +23,9 @@ export default function Index({ auth, records }) {
                                         Create New Record
                                     </Link>
                                 )}
+                                <span className="text-gray-500">
+                                    Total Records: {records.length}
+                                </span>
                             </div>
 
                             <div className="overflow-x-auto">
@@ -37,12 +40,6 @@ export default function Index({ auth, records }) {
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Created By (User ID)
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Created At
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Updated At
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Actions
@@ -61,17 +58,17 @@ export default function Index({ auth, records }) {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {record.user_id}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(record.created_at).toLocaleString()}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {new Date(record.updated_at).toLocaleString()}
-                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <Link
+                                                        href={route('records.show', record.id)}
+                                                        className="text-blue-600 hover:text-blue-900"
+                                                    >
+                                                        Read
+                                                    </Link>
                                                     {(auth.permissions.includes('edit_all_records') || (auth.permissions.includes('edit_own_records') && record.user_id === auth.user.id)) && (
                                                         <Link
                                                             href={route('records.edit', record.id)}
-                                                            className="text-indigo-600 hover:text-indigo-900"
+                                                            className="ml-4 text-indigo-600 hover:text-indigo-900"
                                                         >
                                                             Edit
                                                         </Link>
@@ -81,7 +78,7 @@ export default function Index({ auth, records }) {
                                                             href={route('records.destroy', record.id)}
                                                             as="button"
                                                             method="delete"
-                                                            className="text-red-600 hover:text-red-900 ml-4"
+                                                            className="ml-4 text-red-600 hover:text-red-900"
                                                         >
                                                             Delete
                                                         </Link>
