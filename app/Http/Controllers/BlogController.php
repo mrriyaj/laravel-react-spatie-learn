@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Str;
 
 class BlogController extends Controller
 {
@@ -66,15 +67,15 @@ class BlogController extends Controller
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:blogs',
             'summary' => 'required|string',
             'content' => 'required|string',
-            'status' => 'required|in:draft,published,archived',
         ]);
 
         $data['user_id'] = $user->id;
 
-        Blog::create($data);
+        $blog = Blog::create($data);
+        $blog->slug = Str::slug("{$blog->id} " . $data['title']);
+        $blog->save();
 
         return redirect()->route('blogs.index')->with('success', 'Blog created successfully.');
     }
@@ -144,12 +145,11 @@ class BlogController extends Controller
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:blogs',
             'summary' => 'required|string',
             'content' => 'required|string',
-            'status' => 'required|in:draft,published,archived',
         ]);
 
+        $blog->slug = Str::slug("{$blog->id} " . $data['title']);
         $blog->update($data);
 
         return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
