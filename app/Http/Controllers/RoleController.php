@@ -11,8 +11,13 @@ class RoleController extends Controller
     // List all roles
     public function index()
     {
-        $roles = Role::all();
-        return inertia('Roles/Index', ['roles' => $roles]);
+        // Get all roles with their associated permissions
+        $roles = Role::with('permissions')->get();
+
+        // Pass roles and permissions to the view
+        return inertia('Roles/Index', [
+            'roles' => $roles,
+        ]);
     }
 
     // Show the form for creating a new role

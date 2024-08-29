@@ -3,6 +3,42 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 
 export default function Index({ auth, roles }) {
+    const categorizedPermissions = {
+        Records: [
+            'create_records', 'view_all_records', 'view_own_records',
+            'edit_all_records', 'edit_own_records',
+            'delete_all_records', 'delete_own_records'
+        ],
+        Blogs: [
+            'create_blogs', 'view_all_blogs', 'view_own_blogs',
+            'edit_all_blogs', 'edit_own_blogs',
+            'delete_all_blogs', 'delete_own_blogs'
+        ]
+    };
+
+    const permissionTypes = ['create', 'view_all', 'view_own', 'edit_all', 'edit_own', 'delete_all', 'delete_own'];
+
+    const renderPermissions = (role) => {
+        return Object.keys(categorizedPermissions).map(category => (
+            <tr key={category}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                        {category}
+                    </div>
+                </td>
+                {permissionTypes.map(type => (
+                    <td key={type} className="px-6 py-4 whitespace-nowrap text-center">
+                        {role.permissions.some(permission => permission.name === `${type}_${category.toLowerCase()}`) ? (
+                            <span className="text-green-600">✓</span>
+                        ) : (
+                            <span className="text-red-600">✗</span>
+                        )}
+                    </td>
+                ))}
+            </tr>
+        ));
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -25,53 +61,73 @@ export default function Index({ auth, roles }) {
                             </div>
 
                             <div className="flex flex-col">
-                                <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                    <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                        <div className="overflow-hidden shadow-md sm:rounded-lg">
-                                            <table className="min-w-full divide-y divide-gray-200">
-                                                <thead className="bg-gray-50">
-                                                    <tr>
+                                <div className="inline-block min-w-full py-2 align-middle">
+                                    <div className="overflow-hidden shadow-md sm:rounded-lg">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        Role Name
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        Category
+                                                    </th>
+                                                    {permissionTypes.map((type) => (
                                                         <th
+                                                            key={type}
                                                             scope="col"
-                                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                                                         >
-                                                            Role Name
+                                                            {type.replace('_', ' ')}
                                                         </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                                        >
-                                                            Actions
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="bg-white divide-y divide-gray-200">
-                                                    {roles.map((role) => (
-                                                        <tr key={role.id}>
-                                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                    ))}
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        Actions
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {roles.map((role) => (
+                                                    <React.Fragment key={role.id}>
+                                                        <tr>
+                                                            <td className="px-6 py-4 whitespace-nowrap" rowSpan={Object.keys(categorizedPermissions).length + 1}>
                                                                 <div className="text-sm font-medium text-gray-900">
                                                                     {role.name}
                                                                 </div>
                                                             </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                                <Link
-                                                                    href={route('roles.edit', role.id)}
-                                                                    className="text-indigo-600 hover:text-indigo-900"
-                                                                >
-                                                                    Edit
-                                                                </Link>
-                                                                <Link
-                                                                    href="#"
-                                                                    className="text-red-600 hover:text-red-900 ml-4"
-                                                                >
-                                                                    Delete
-                                                                </Link>
+                                                        </tr>
+                                                        {renderPermissions(role)}
+                                                        <tr>
+                                                            <td className="px-6 py-4 whitespace-nowrap text-center" colSpan={permissionTypes.length + 1}>
+                                                                <div className="flex justify-end space-x-4">
+                                                                    <Link
+                                                                        href={route('roles.edit', role.id)}
+                                                                        className="text-indigo-600 hover:text-indigo-900"
+                                                                    >
+                                                                        Edit
+                                                                    </Link>
+                                                                    <Link
+                                                                        href="#"
+                                                                        className="text-red-600 hover:text-red-900"
+                                                                    >
+                                                                        Delete
+                                                                    </Link>
+                                                                </div>
                                                             </td>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </React.Fragment>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
