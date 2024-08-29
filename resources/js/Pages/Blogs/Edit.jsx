@@ -1,6 +1,6 @@
 import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Edit({ auth, blog }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -107,7 +107,7 @@ export default function Edit({ auth, blog }) {
                                         className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                         disabled={processing}
                                     >
-                                        Create
+                                        Update
                                     </button>
                                 </div>
                             </form>
