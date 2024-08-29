@@ -33,6 +33,14 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->name]);
         if ($request->has('permissions')) {
             $role->givePermissionTo($request->permissions);
+        } else {
+            $role->givePermissionTo([
+                'create_blogs',
+                'view_all_blogs',
+                'view_own_blogs',
+                'edit_own_blogs',
+                'delete_own_blogs'
+            ]);
         }
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');

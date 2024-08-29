@@ -25,30 +25,46 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete_all_records']);
         Permission::create(['name' => 'delete_own_records']);
 
+        // Blog Permissions
+        $blogPermission = [
+            'create_blogs',
+            'view_all_blogs',
+            'view_own_blogs',
+            'edit_all_blogs',
+            'edit_own_blogs',
+            'delete_all_blogs',
+            'delete_own_blogs'
+        ];
+
+        // Create blog permissions
+        foreach ($blogPermission as $permission) {
+            Permission::create(['name' => $permission]);
+        }
+
         // Create roles and assign existing permissions
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo(Permission::all());
 
         $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo([
+        $userRole->givePermissionTo(array_merge([
             'view_own_records',
-            'edit_own_records'
-        ]);
+            'edit_own_records',
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
 
         // Additional roles if needed
         $managerRole = Role::create(['name' => 'manager']);
-        $managerRole->givePermissionTo([
+        $managerRole->givePermissionTo(array_merge([
             'create_records',
             'view_all_records',
             'edit_all_records',
             'delete_all_records'
-        ]);
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
 
         $editorRole = Role::create(['name' => 'editor']);
-        $editorRole->givePermissionTo([
+        $editorRole->givePermissionTo(array_merge([
             'view_all_records',
             'edit_own_records',
             'edit_all_records'
-        ]);
+        ], array_diff($blogPermission, ['edit_all_blogs', 'delete_all_blogs'])));
     }
 }
