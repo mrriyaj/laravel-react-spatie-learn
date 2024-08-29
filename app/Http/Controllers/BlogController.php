@@ -87,21 +87,19 @@ class BlogController extends Controller
     {
         //
         $user = Auth::user();
-
-        if (
-            !$user->hasPermissionTo('view_all_blogs') &&
-            !($user->hasPermissionTo('view_own_blogs') && $blog->user_id === $user->id)
-        ) {
+        if (!$user->hasPermissionTo('view_all_blogs') && !$user->hasPermissionTo('view_own_blogs')) {
             abort(403, 'Unauthorized action.');
+        } else if ($user->hasPermissionTo('view_own_blogs') && $blog->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        } else {
+            return inertia('Blogs/Show', [
+                'auth' => [
+                    'user' => $user,
+                    'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+                ],
+                'blog' => $blog,
+            ]);
         }
-
-        return inertia('Blogs/Show', [
-            'auth' => [
-                'user' => $user,
-                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
-            ],
-            'blog' => $blog,
-        ]);
     }
 
     /**
@@ -112,20 +110,19 @@ class BlogController extends Controller
         //
         $user = Auth::user();
 
-        if (
-            !$user->hasPermissionTo('edit_all_blogs') &&
-            !($user->hasPermissionTo('edit_own_blogs') && $blog->user_id === $user->id)
-        ) {
+        if (!$user->hasPermissionTo('edit_all_blogs') && !$user->hasPermissionTo('edit_own_blogs')) {
             abort(403, 'Unauthorized action.');
+        } else if ($user->hasPermissionTo('edit_own_blogs') && $blog->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        } else {
+            return inertia('Blogs/Edit', [
+                'auth' => [
+                    'user' => $user,
+                    'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+                ],
+                'blog' => $blog,
+            ]);
         }
-
-        return inertia('Blogs/Edit', [
-            'auth' => [
-                'user' => $user,
-                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
-            ],
-            'blog' => $blog,
-        ]);
     }
 
     /**
@@ -136,23 +133,22 @@ class BlogController extends Controller
         //
         $user = Auth::user();
 
-        if (
-            !$user->hasPermissionTo('edit_all_blogs') &&
-            !($user->hasPermissionTo('edit_own_blogs') && $blog->user_id === $user->id)
-        ) {
+        if (!$user->hasPermissionTo('edit_all_blogs') && !$user->hasPermissionTo('edit_own_blogs')) {
             abort(403, 'Unauthorized action.');
+        } else if ($user->hasPermissionTo('edit_own_blogs') && $blog->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        } else {
+            $data = $request->validate([
+                'title' => 'required|string|max:255',
+                'summary' => 'required|string',
+                'content' => 'required|string',
+            ]);
+
+            $blog->slug = Str::slug("{$blog->id} " . $data['title']);
+            $blog->update($data);
+
+            return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
         }
-
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'summary' => 'required|string',
-            'content' => 'required|string',
-        ]);
-
-        $blog->slug = Str::slug("{$blog->id} " . $data['title']);
-        $blog->update($data);
-
-        return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
     }
 
     /**
@@ -163,15 +159,14 @@ class BlogController extends Controller
         //
         $user = Auth::user();
 
-        if (
-            !$user->hasPermissionTo('delete_all_blogs') &&
-            !($user->hasPermissionTo('delete_own_blogs') && $blog->user_id === $user->id)
-        ) {
+        if (!$user->hasPermissionTo('delete_all_blogs') && !$user->hasPermissionTo('delete_own_blogs')) {
             abort(403, 'Unauthorized action.');
+        } else if ($user->hasPermissionTo('delete_own_blogs') && $blog->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        } else {
+            $blog->delete();
+
+            return redirect()->route('blogs.index')->with('success', 'Blog deleted successfully.');
         }
-
-        $blog->delete();
-
-        return redirect()->route('blogs.index')->with('success', 'Blog deleted successfully.');
     }
 }
