@@ -95,9 +95,9 @@ export default function Index({ auth, blogs }) {
                                                     >
                                                         Read
                                                     </Link>
-                                                    {(can("delete_all_blogs") ||
+                                                    {(can("edit_all_blogs") ||
                                                         (auth.permissions.includes(
-                                                            "delete_own_blogs"
+                                                            "edit_own_blogs"
                                                         ) &&
                                                             user.id ===
                                                                 blog.user_id)) && (
