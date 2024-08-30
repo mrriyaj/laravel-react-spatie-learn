@@ -95,39 +95,39 @@ export default function Index({ auth, blogs }) {
                                                     >
                                                         Read
                                                     </Link>
-                                                    {can(
-                                                        auth,
-                                                        "edit_own_blogs"
-                                                    ) &&
-                                                        user.id ===
-                                                        blog.user_id && (
-                                                            <Link
-                                                                href={route(
-                                                                    "blogs.edit",
+                                                    {(can("delete_all_blogs") ||
+                                                        (auth.permissions.includes(
+                                                            "delete_own_blogs"
+                                                        ) &&
+                                                            user.id ===
+                                                                blog.user_id)) && (
+                                                        <Link
+                                                            href={route(
+                                                                "blogs.edit",
+                                                                blog.id
+                                                            )}
+                                                            className="ml-4 text-yellow-600 hover:text-yellow-900"
+                                                        >
+                                                            Edit
+                                                        </Link>
+                                                    )}
+                                                    {(can("delete_all_blogs") ||
+                                                        (auth.permissions.includes(
+                                                            "delete_own_blogs"
+                                                        ) &&
+                                                            user.id ===
+                                                                blog.user_id)) && (
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDelete(
                                                                     blog.id
-                                                                )}
-                                                                className="ml-4 text-yellow-600 hover:text-yellow-900"
-                                                            >
-                                                                Edit
-                                                            </Link>
-                                                        )}
-                                                    {can(
-                                                        auth,
-                                                        "delete_own_blogs"
-                                                    ) &&
-                                                        user.id ===
-                                                        blog.user_id && (
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        blog.id
-                                                                    )
-                                                                }
-                                                                className="ml-4 text-red-600 hover:text-red-900"
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        )}
+                                                                )
+                                                            }
+                                                            className="ml-4 text-red-600 hover:text-red-900"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
